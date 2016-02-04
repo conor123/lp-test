@@ -1,5 +1,6 @@
 Execution
 ---------
+min v php 5.6
 
 From the root directory run
 

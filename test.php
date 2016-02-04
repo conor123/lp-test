@@ -17,9 +17,9 @@ $output_directory = DATA_OUPUT_DIR;
 
 //$content = array();
 
-$destinations_file = DATA_INPUT_DIR . "destinations.xml";
+$destinations_file = DATA_INPUT_DIR . "bigger-destinations.xml";
 
-$taxonomy_file = DATA_INPUT_DIR . "taxonomy.xml";
+$taxonomy_file = DATA_INPUT_DIR . "bigger-taxonomy.xml";
 
 $start = microtime(true);
 
@@ -37,4 +37,4 @@ $xpath = new DOMXPath($dom);
 
 process_destinations($destinations_file, $xpath, $output_directory);
 
-echo "> Completed in " . (microtime(true) - $start) . "s";
+echo "> Completed in " . (microtime(true) - $start) . "s" . PHP_EOL;

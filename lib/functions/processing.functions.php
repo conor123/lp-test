@@ -37,7 +37,8 @@ function process_destinations($destinations_file, $xpath, $output_directory)
                 //$destination['introductory'] = str_replace("\n", "<br />", $introductory->item(0)->nodeValue);
                 $destination['introductory'] = $introductory->item(0)->nodeValue;
                 $history = $xp->query("/destination/history");
-                $destination['history'] = isset($history->item(0)->nodeValue) ? str_replace("\n", "<br />", $history->item(0)->nodeValue) : null;
+                //$destination['history'] = isset($history->item(0)->nodeValue) ? str_replace("\n", "<br />", $history->item(0)->nodeValue) : null;
+                $destination['history'] = isset($history->item(0)->nodeValue) ? $history->item(0)->nodeValue : null;
                 
 
                 $html = render_html($destination);
@@ -71,7 +72,7 @@ function get_navigation($xpath, $atlas_node_id)
 
     $parents = array();
 
-    $parents = recursive_parent_nodes($current_node[0], $parents);
+    $parents = recursive_parent_nodes($current_node->item(0), $parents);
 
     //echo $parents[0];die;
 
@@ -104,22 +105,12 @@ function get_navigation($xpath, $atlas_node_id)
     //$children = $current_node[0]->firstChild->childNodes;
 
     //echo $current_node[0]->firstChild->nodeValue . PHP_EOL;//Africa
+    foreach($current_node as $curnode){
+		foreach ($curnode->childNodes as $child) {
 
-	foreach ($current_node[0]->childNodes as $child) {
-
-
-
-		//echo "Child Node 1: " . $child->firstChild->nodeValue . PHP_EOL;
-
-		$children[] = $child->firstChild->nodeValue;
-
-		//echo "Child Node 2: " . $child->firstChild->nodeValue . PHP_EOL;
-
-		//echo "Child Node 3: " . $child->nextChild->nodeValue . PHP_EOL;
-
-		
+			$children[] = $child->firstChild->nodeValue;
+		}
 	}
-
 	//var_dump($children);die;
 
 	$nav_down = "<ul>";
