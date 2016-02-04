@@ -39,7 +39,7 @@ function render_html($content)
 	            </div>
 	            <div class="content">
 	              <div class="inner">
-	                <h2>Introductory</h2>'. $content['introductory'] .
+	                <h2>Introduction</h2>'. $content['introductory'] .
 	                $history_title . $content['history'] .
 	          		  
 	              '</div>

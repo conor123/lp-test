@@ -67,7 +67,7 @@ function get_navigation($xpath, $atlas_node_id)
 
     //print_r($current_node[0]->nodeValue);die;
 
-    //echo $current_node->nodeValue . PHP_EOL;die;
+    //echo $current_node[0]->firstChild->nodeValue . PHP_EOL;//Africa
 
     $parents = array();
 
@@ -93,20 +93,48 @@ function get_navigation($xpath, $atlas_node_id)
 
     $nav_up .= "</ul>";
 
+    $navigation['nav-up'] = $nav_up;
+
 
 
     //print_r($nav_up);die;
 
+    $children = array();
+
+    //$children = $current_node[0]->firstChild->childNodes;
+
+    //echo $current_node[0]->firstChild->nodeValue . PHP_EOL;//Africa
+
+	foreach ($current_node[0]->childNodes as $child) {
 
 
-	$navigation['nav-up'] = $nav_up;
 
-	$navigation['nav-down'] = '
-	<ul>
-	  <li><a href="Africa.html">Kestrel</a></li>
-	  <li><a href="Africa.html">Mount Julian</a></li>
-	</ul>
-	';
+		//echo "Child Node 1: " . $child->firstChild->nodeValue . PHP_EOL;
+
+		$children[] = $child->firstChild->nodeValue;
+
+		//echo "Child Node 2: " . $child->firstChild->nodeValue . PHP_EOL;
+
+		//echo "Child Node 3: " . $child->nextChild->nodeValue . PHP_EOL;
+
+		
+	}
+
+	//var_dump($children);die;
+
+	$nav_down = "<ul>";
+
+	foreach ($children as $child) {
+		$nav_down .= "<li><a href='" . $child . ".html" . "'>" . $child. "</a></li>";
+	}
+
+	$nav_down .= "</ul>";
+
+	//var_dump($nav_down);die;
+
+	
+
+	$navigation['nav-down'] = $nav_down;
 
 	return $navigation;
 }
@@ -116,7 +144,7 @@ function recursive_parent_nodes($node, $parents)
 {	
 	//echo "> CHECK: " . $node->parentNode->nodeValue . PHP_EOL;
 
-	if (empty($node->parentNode->parentNode)) {
+	if (empty($node->parentNode->parentNode->parentNode)) {
 
 		//echo "> Top Node!" . PHP_EOL;
 
