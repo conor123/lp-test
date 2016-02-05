@@ -105,8 +105,8 @@ function get_navigation($xpath, $atlas_node_id)
     //$children = $current_node[0]->firstChild->childNodes;
 
     //echo $current_node[0]->firstChild->nodeValue . PHP_EOL;//Africa
-    foreach($current_node as $curnode){
-		foreach ($curnode->childNodes as $child) {
+    foreach($current_node as $item){
+		foreach ($item->childNodes as $child) {
 
 			$children[] = $child->firstChild->nodeValue;
 		}
