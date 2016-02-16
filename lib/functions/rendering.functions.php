@@ -63,3 +63,14 @@ function write_html_to_disk($html, $filename, $directory)
 
 	fclose($fh);
 }
+
+function render($destinations)
+{
+
+	foreach ($destinations as $atlas_id => $content) {
+		$filename = $content['title'] . ".html";
+		$html = render_html($content);
+		write_html_to_disk($html, $filename, "data/output/");
+		//die;
+	}
+}

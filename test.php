@@ -23,18 +23,26 @@ $taxonomy_file = DATA_INPUT_DIR . "taxonomy.xml";
 
 $start = microtime(true);
 
-$xml = file_get_contents($taxonomy_file);
 
-$dom = new DOMDocument;
 
-$dom->preserveWhiteSpace = false;
-//$dom = DOMDocument::loadXML($xml);
-$dom->LoadXML($xml);
+// $xml = file_get_contents($taxonomy_file);
 
-$xpath = new DOMXPath($dom);
+// $dom = new DOMDocument;
+
+// $dom->preserveWhiteSpace = false;
+// //$dom = DOMDocument::loadXML($xml);
+// $dom->LoadXML($xml);
+
+// $xpath = new DOMXPath($dom);
 
 //print_r($xpath);die;
 
-process_destinations($destinations_file, $xpath, $output_directory);
+$destinations = process_destinations($destinations_file);
+
+process_navigation($destinations, $taxonomy_file);
+
+//var_dump($destinations);
+
+render($destinations);
 
 echo "> Completed in " . (microtime(true) - $start) . "s" . PHP_EOL;
