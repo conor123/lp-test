@@ -66,11 +66,51 @@ function process_navigation(&$destinations, $taxonomy_file)
 
 	while ($reader->read()) {
 
+		$reader_node = $reader->expand();
+	    $dom = new DomDocument();
+	    $n = $dom->importNode($reader_node,true);
+	    $dom->appendChild($n);// Dome Element
+
+	    $xp = new DOMXPath($dom);
+
+	    $query = "//ancestor::node[@atlas_node_id=355632]";//Query all child nodes where att = x
+		    
+	    $results = $xp->query($query);
+
+	    $parents = array();
+
+	    $parents = recursive_parent_nodes($results->item(0)->parentNode->childNodes[1], $parents);
+
+	    var_dump($parents);die;
+
+	    // foreach ($results as $key => $DOMElement) {
+
+	    // 	//echo "X >>> " . $DOMElement->nodeValue . PHP_EOL;
+
+	    // 	//echo "Y >>> " . $DOMElement->parentNode->childNodes[1]->nodeValue . PHP_EOL;
+
+	    // 	foreach ($DOMElement->parentNode->childNodes as $key => $value) {
+	    // 		//$parents[] = trim($value->nodeValue);
+
+	    // 		if (!empty(trim($value->firstChild->nodeValue))) {
+	    // 			echo !empty(trim($value->firstChild->nodeValue)) ? "Y >>> " . trim($value->firstChild->nodeValue) . PHP_EOL : "";
+	    // 		}
+	    // 	}
+	    // }
+	   
+	    
+
+	    //$query = "parent::node()";
+	    
+	    //$results = $node->xpath($query);
+	    // var_dump($results);
+	    // var_dump($results->item(0));
 
 
 		if ($reader->localName == "node" && $reader->nodeType == XMLREADER::ELEMENT ) {
 
-		   //$node = new SimpleXMLElement($reader->readOuterXML());
+		    //$node = new SimpleXMLElement($reader->readOuterXML());
+			$node = simplexml_import_dom($dom);
 
 		    //echo "> Parent: " . $node->node_name . " : " . $reader->getAttribute("geo_id") . PHP_EOL;
 
@@ -83,12 +123,8 @@ function process_navigation(&$destinations, $taxonomy_file)
 
 		    // echo "> Child: " . $node->node->node_name . PHP_EOL;
 
-		    $reader_node = $reader->expand();
-		    $dom = new DomDocument();
-		    $n = $dom->importNode($reader_node,true);
-		    $dom->appendChild($n);// Dome Element
-		    $node = simplexml_import_dom($dom);
-		    $xp = new DOMXPath($dom);
+		    
+		    
 
 			foreach ($node->children() as $key => $child) {
 
@@ -111,11 +147,13 @@ function process_navigation(&$destinations, $taxonomy_file)
 
 		    // echo "Class: " . get_class($reader_node) . " | " . $reader_node->nodeValue . PHP_EOL;
 
-		    $query = "//node[@atlas_node_id=$atlas_node_id]";//Query all child nodes where att = x
+		    //$xp = new DOMXPath($dom);
 
-		    $current_node = $xp->query($query);
 
-		    //var_dump($current_node);
+
+		    
+
+		    //var_dump($current_node->item(0)->nodeValue);
 
 
 
@@ -244,14 +282,15 @@ function recursive_parent_nodes($node, $parents)
 
 		echo "> Top Node!" . PHP_EOL;
 
-		var_dump($parents);
+		//var_dump($parents);
 
 		return $parents;
 
 	} else {
+		//echo "> Adding to parents: " . $node->firstChild->nodeValue . PHP_EOL;
 
-		$parents[] = $node->firstChild->nodeValue;
-		var_dump($parents);
+		$parents[] = $node->childNodes[1]->nodeValue;
+		//var_dump($parents);
 		$node = $node->parentNode;
 
 		return recursive_parent_nodes($node, $parents);

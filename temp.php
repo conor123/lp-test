@@ -1,46 +1,52 @@
 <?php
 //http://www.codeproject.com/Articles/582953/Working-with-XML-in-PHP
 
-$file = "data/input/taxonomy.xml";
+$xml = <<<XML
+<node id = "1">
+   <node_name>One</node_name>
+   <node id = "2">
+      <node_name>Two A</node_name>
+   </node>
+   <node id = "3">
+      <node_name>Two B</node_name>
+   </node>
+   <node id = "4">
+      <node_name>Two C</node_name>
+      <node id = "5">
+         <node_name>Three A</node_name>
+      </node>
+   </node>
+</node>
 
-$start = microtime(true);
+XML;
 
-$reader = new XMLReader();
+$dom = new DomDocument();
 
-$reader->open($file);
+$dom->loadXML($xml);
 
-while ($reader->read()) {
+$domxpath = new DomXpath($dom);
 
-   //echo ">>> Reading..." . PHP_EOL;
+$query = "//node[@id = 5]";
 
-	if ($reader->localName == "node" && XMLREADER::ELEMENT == $reader->nodeType) {
+$query = "//ancestor::node";
 
-      $node = new SimpleXMLElement($reader->readOuterXML());
+$query = "//ancestor::node[@id = 5]";
 
-      echo "> Parent: " . $node->node_name . " : " . $reader->getAttribute("geo_id") . PHP_EOL;
+$results = $domxpath->query($query);
 
-      // echo "> Child: " . $node->node->node_name . PHP_EOL;
+//var_dump($results);
 
-      $node = $reader->expand();
-      $dom = new DomDocument();
-      $n = $dom->importNode($node,true);
-      $dom->appendChild($n);
-      $node = simplexml_import_dom($dom);
+foreach ($results as $key => $DOMElement) {
+   //
+   echo "> Class: " . get_class($DOMElement) 
+     . " | V: " . trim($DOMElement->nodeValue) 
+     . " |NP| " . $DOMElement->getNodePath() . PHP_EOL;
+     //
+   echo ">> " . $DOMElement->parentNode->getNodePath() . PHP_EOL;
+   //var_dump($DOMElement->firstChild->parentNode);
+   //print_r($DOMElement->parentNode->firstChild->nodeValue);
 
-      foreach ($node->children() as $key => $child) {
+   echo ">>> " . $DOMElement->parentNode->childNodes[1]->nodeValue . PHP_EOL;
 
-         //echo "Class: " . get_class($child) . PHP_EOL; // SimpleXMLElement
-
-         if ($child->getName() === "node") {
-            echo "Element Type <" . $child->getName() . "> | " . $child->node_name . " || " . $child['geo_id'] . PHP_EOL;
-         }
-      }
-
-	}
-
+   //echo ">>> " . $DOMElement->ownerDocument->saveXML() . PHP_EOL;
 }
-
-$time = microtime(true) - $start;
-//print "> R: " . $result->item(0)->nodeValue . PHP_EOL;
-print "> T: " . $time . "s" . PHP_EOL;
-
