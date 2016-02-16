@@ -73,38 +73,39 @@ function process_navigation(&$destinations, $taxonomy_file)
 
 	    $xp = new DOMXPath($dom);
 
-	    $query = "//ancestor::node[@atlas_node_id=355632]";//Query all child nodes where att = x
-		    
-	    $results = $xp->query($query);
+	    //$atlas_node_id = $n->getAttribute("atlas_node_id");
 
-	    $parents = array();
+	    $ne = $dom->getElementsByTagName('node');
 
-	    $parents = recursive_parent_nodes($results->item(0)->parentNode->childNodes[1], $parents);
+	    $query = "//node[@atlas_node_id]";//Query all child nodes where att = x
+			    
+		$results = $xp->query($query);
 
-	    var_dump($parents);die;
+		var_dump($results->item(0)->getAttribute ( "atlas_node_id" ));die;
 
-	    // foreach ($results as $key => $DOMElement) {
+	    echo "XID:" .  PHP_EOL;//$ne->nodeValue .
 
-	    // 	//echo "X >>> " . $DOMElement->nodeValue . PHP_EOL;
+	    //var_dump($reader_node->childNodes[1]->firstChild);
 
-	    // 	//echo "Y >>> " . $DOMElement->parentNode->childNodes[1]->nodeValue . PHP_EOL;
-
-	    // 	foreach ($DOMElement->parentNode->childNodes as $key => $value) {
-	    // 		//$parents[] = trim($value->nodeValue);
-
-	    // 		if (!empty(trim($value->firstChild->nodeValue))) {
-	    // 			echo !empty(trim($value->firstChild->nodeValue)) ? "Y >>> " . trim($value->firstChild->nodeValue) . PHP_EOL : "";
-	    // 		}
-	    // 	}
-	    // }
-	   
 	    
 
-	    //$query = "parent::node()";
+	    $atlas_node_id = $results->item(0)->getAttribute ( "atlas_node_id" ) ; //355619
+
+	    if (is_numeric($atlas_node_id)) {
+	    	echo "ID:" . $atlas_node_id . PHP_EOL;
+
+		    $query = "//ancestor::node[@atlas_node_id=$atlas_node_id]";//Query all child nodes where att = x
+			    
+		    $results = $xp->query($query);
+
+		    $parents = array();
+
+		    $parents = recursive_parent_nodes($results->item(0)->parentNode->childNodes[1], $parents);
+
+		    var_dump($parents);//die;
+	    }
+
 	    
-	    //$results = $node->xpath($query);
-	    // var_dump($results);
-	    // var_dump($results->item(0));
 
 
 		if ($reader->localName == "node" && $reader->nodeType == XMLREADER::ELEMENT ) {
@@ -123,9 +124,6 @@ function process_navigation(&$destinations, $taxonomy_file)
 
 		    // echo "> Child: " . $node->node->node_name . PHP_EOL;
 
-		    
-		    
-
 			foreach ($node->children() as $key => $child) {
 
 				//echo "Class: " . get_class($child) . PHP_EOL; // SimpleXMLElement
@@ -143,46 +141,13 @@ function process_navigation(&$destinations, $taxonomy_file)
 		    * Drill UP
 		    */
 
-		    //$depth = $reader->depth; # parent elements depth
-
-		    // echo "Class: " . get_class($reader_node) . " | " . $reader_node->nodeValue . PHP_EOL;
-
-		    //$xp = new DOMXPath($dom);
-
-
-
-		    
-
-		    //var_dump($current_node->item(0)->nodeValue);
-
-
-
-		    //print_r($current_node[0]->nodeValue);die;
-
-		    //echo $current_node[0]->firstChild->nodeValue . PHP_EOL;//Africa
-
-		    // $parents = array();
-
-		    // $parents = recursive_parent_nodes($current_node->item(0), $parents);
-
-		    // var_dump($parents);
-
-
-
-			//
-
-
 			$nav_up = "<ul>";
 
 			echo "> Node: " . $node->node_name . " : " . $reader->getAttribute("geo_id") . " || " . $reader->depth . PHP_EOL;
 
 			$nav_up .= "<li><a href = \"$node->node_name.html\">" . $node->node_name . "</a></li>";
 
-
 			$nav_up .= "</ul>";
-
-
-
 
 			// Update Destinations
 			$destinations[$atlas_node_id]['nav-down'] =  $nav_down;
@@ -276,7 +241,7 @@ function get_navigation($tax_xpath, $atlas_node_id)
 */
 function recursive_parent_nodes($node, $parents)
 {	
-	echo "> CHECK: " . $node->parentNode->nodeValue . PHP_EOL;
+	//echo "> CHECK: " . $node->parentNode->nodeValue . PHP_EOL;
 
 	if (empty($node->parentNode->parentNode->parentNode)) {
 
@@ -289,7 +254,10 @@ function recursive_parent_nodes($node, $parents)
 	} else {
 		//echo "> Adding to parents: " . $node->firstChild->nodeValue . PHP_EOL;
 
-		$parents[] = $node->childNodes[1]->nodeValue;
+		if (isset($node->childNodes[1])) {
+			$parents[] = $node->childNodes[1]->nodeValue;
+		}
+		
 		//var_dump($parents);
 		$node = $node->parentNode;
 
